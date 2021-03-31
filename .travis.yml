@@ -1,0 +1,24 @@
+sudo: required
+language: generic
+
+services:
+  - docker
+
+before_install:
+  - docker build -t marcelbritto/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true marcelbritto/react-test npm test
+
+after_success:
+  - docker build -t marcelbritto/multi-client ./client
+  - docker build -t marcelbritto/multi-nginx ./nginx
+  - docker build -t marcelbritto/multi-server ./server
+  - docker build -t marcelbritto/multi-worker ./worker
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those images and push them to docker hub
+  - docker push marcelbritto/multi-client
+  - docker push marcelbritto/multi-nginx
+  - docker push marcelbritto/multi-server
+  - docker push marcelbritto/multi-worker
