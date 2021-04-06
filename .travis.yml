@@ -22,3 +22,15 @@ after_success:
   - docker push marcelbritto/multi-nginx
   - docker push marcelbritto/multi-server
   - docker push marcelbritto/multi-worker
+
+deploy:
+  provider: elasticbeanstalk
+  region: 'sa-east-1'
+  app: 'multi-docker'
+  env: 'MultiDocker-env'
+  bucket_name: 'elasticbeanstalk-sa-east-1-685169867076'
+  bucket_path: 'docker-multi'
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY
